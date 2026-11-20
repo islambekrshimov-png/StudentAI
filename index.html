@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="kk">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>StudentAI — ақылды оқу көмекшісі</title>
+<style>
+:root{--blue:#245cf5;--ink:#14213d;--muted:#61708d;--bg:#f3f6ff;--card:#fff}
+*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:var(--bg);color:var(--ink)}
+header{background:white;padding:15px 20px;display:flex;justify-content:space-between;align-items:center;box-shadow:0 2px 12px #14213d10;position:sticky;top:0;z-index:2}
+.logo{font-size:23px;font-weight:800;color:var(--blue)}.wrap{max-width:1050px;margin:auto;padding:22px}
+nav{display:flex;gap:8px;flex-wrap:wrap}button{border:0;border-radius:12px;padding:11px 15px;background:#e8eeff;color:#1745bd;font-weight:700;cursor:pointer}
+button.active,.primary{background:var(--blue);color:white}.hero{padding:28px;border-radius:22px;background:linear-gradient(120deg,#dce7ff,#fff);margin-bottom:18px}
+.hero h1{font-size:clamp(30px,7vw,48px);margin:0 0 8px}.hero p{color:var(--muted);font-size:17px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}.card{background:var(--card);border:1px solid #e3eaff;border-radius:18px;padding:18px;margin-bottom:14px}
+.card h3{margin-top:0}.muted{color:var(--muted)}.page{display:none}.page.show{display:block}
+input,textarea,select{width:100%;padding:12px;border:1px solid #d6def0;border-radius:11px;font:inherit;margin:6px 0 12px;background:white}
+textarea{min-height:95px;resize:vertical}.row{display:flex;gap:10px;flex-wrap:wrap}.row>*{flex:1;min-width:130px}
+.task{padding:10px;border-bottom:1px solid #edf0f8}.answer{display:block;margin:8px 0;text-align:left;width:100%;background:#f0f4ff;color:#14213d}
+.answer.chosen{outline:2px solid var(--blue)}.good{color:#14804a;font-weight:bold}.bad{color:#b42318;font-weight:bold}
+footer{text-align:center;padding:25px;color:var(--muted);font-size:13px}
+</style></head>
+<body>
+<header><div class="logo">🎓 StudentAI</div><span class="muted">Кад 26.2</span></header>
+<div class="wrap">
+<div class="hero"><h1>Student<span style="color:#245cf5">AI</span></h1><h2>Сіздің ақылды оқу көмекшіңіз</h2><p>Сұрақ қойыңыз, оқу жоспарын құрыңыз және біліміңізді тексеріңіз.</p></div>
+<nav>
+<button class="active" onclick="show('home',this)">Басты бет</button><button onclick="show('assistant',this)">AI көмекші</button><button onclick="show('planner',this)">Оқу жоспары</button><button onclick="show('quiz',this)">Тесттер</button><button onclick="show('about',this)">Команда</button>
+</nav>
+<section id="home" class="page show">
+<div class="grid" style="margin-top:16px">
+<div class="card"><h3>💬 AI көмекші</h3><p class="muted">Оқу тақырыптары бойынша сұрақ қойыңыз.</p><button onclick="showById('assistant')">Ашу →</button></div>
+<div class="card"><h3>📅 Оқу жоспары</h3><p class="muted">Тапсырмалар мен дедлайндарды сақтаңыз.</p><button onclick="showById('planner')">Ашу →</button></div>
+<div class="card"><h3>📝 Тест құрастырушы</h3><p class="muted">Тақырып бойынша білімді тексеріңіз.</p><button onclick="showById('quiz')">Ашу →</button></div>
+</div><div class="card"><h3>Қош келдіңіз!</h3><p>StudentAI — студенттердің оқуын ұйымдастыруға арналған бастапқы веб-прототип.</p></div>
+</section>
+<section id="assistant" class="page">
+<div class="card"><h2>💬 AI көмекші</h2><p class="muted">Сұрағыңызды енгізіңіз. Бұл тегін демонстрациялық режим.</p>
+<textarea id="question" placeholder="Мысалы: Туынды дегеніміз не?"></textarea><button class="primary" onclick="reply()">Жауап алу</button><div id="reply" class="card" style="margin-top:14px;display:none"></div></div>
+</section>
+<section id="planner" class="page">
+<div class="card"><h2>📅 Оқу жоспары</h2><label>Пән атауы</label><input id="subject" placeholder="Математика"><label>Тапсырма</label><input id="task" placeholder="5 есеп шығару"><div class="row"><div><label>Мерзімі</label><input id="due" type="date"></div><div><label>Маңыздылығы</label><select id="priority"><option>Жоғары</option><option>Орташа</option><option>Төмен</option></select></div></div><button class="primary" onclick="addTask()">Тапсырма қосу</button><h3>Менің тапсырмаларым</h3><div id="tasks"></div></div>
+</section>
+<section id="quiz" class="page">
+<div class="card"><h2>📝 Білімді тексеру</h2><p class="muted">Демо тест: Жасанды интеллект негіздері</p><div id="quizbox"></div><button class="primary" onclick="checkQuiz()">Нәтижені тексеру</button><p id="score"></p></div>
+</section>
+<section id="about" class="page">
+<div class="card"><h2>Команда туралы</h2><p><b>Жоба:</b> StudentAI — студенттерге арналған ақылды көмекші</p><p><b>Топ:</b> Кад 26.2</p><p><b>Капитан:</b> Ршимов Исламбек</p><ul><li>Ршимов Исламбек — жоба жетекшісі</li><li>Бисенов Багдат — прототип әзірлеушісі</li><li>Бердихан Шакира — ЖИ және деректер бағыты</li></ul></div>
+</section>
+</div><footer>StudentAI · Оқу үдерісін жеңілдетуге арналған студенттік жоба</footer>
+<script>
+function show(id,btn){document.querySelectorAll('.page').forEach(x=>x.classList.remove('show'));document.getElementById(id).classList.add('show');document.querySelectorAll('nav button').forEach(x=>x.classList.remove('active'));if(btn)btn.classList.add('active')}
+function showById(id){show(id,document.querySelectorAll('nav button')[['home','assistant','planner','quiz','about'].indexOf(id)])}
+function reply(){let q=document.getElementById('question').value.toLowerCase(),a='Сұрағыңыз қабылданды. Бұл демо нұсқада нақты ЖИ серверіне қосылу жоқ. Толық жауап алу үшін тексерілген AI API интеграциясын қосу қажет.';if(!q.trim()){a='Алдымен сұрағыңызды жазыңыз.'}else if(q.includes('туынды'))a='Туынды — функцияның аргументі өзгерген кездегі функция мәнінің өзгеру жылдамдығын көрсететін математикалық ұғым.';else if(q.includes('жасанды интеллект')||q.includes('жк'))a='Жасанды интеллект — компьютерлік жүйелердің үйрену, ақпаратты талдау және тапсырмаларды орындау қабілеттерін сипаттайтын технологиялар саласы.';else if(q.includes('python'))a='Python — оқуға жеңіл синтаксисі бар, веб-әзірлеу, деректерді талдау және автоматтандыруда қолданылатын бағдарламалау тілі.';let el=document.getElementById('reply');el.style.display='block';el.textContent=a}
+let tasks=JSON.parse(localStorage.getItem('studentai_tasks')||'[]');
+function renderTasks(){document.getElementById('tasks').innerHTML=tasks.length?tasks.map((t,i)=>`<div class="task"><b>${esc(t.s)}</b> — ${esc(t.t)}<br><small>${esc(t.d)} · ${esc(t.p)}</small> <button onclick="removeTask(${i})">Өшіру</button></div>`).join(''):'<p class="muted">Әзірге тапсырма жоқ.</p>'}
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function addTask(){let s=subject.value.trim(),t=task.value.trim();if(!s||!t){alert('Пән мен тапсырманы толтырыңыз.');return}tasks.push({s,t,d:due.value||'Мерзім көрсетілмеген',p:priority.value});localStorage.setItem('studentai_tasks',JSON.stringify(tasks));subject.value='';task.value='';renderTasks()}
+function removeTask(i){tasks.splice(i,1);localStorage.setItem('studentai_tasks',JSON.stringify(tasks));renderTasks()}
+const qs=[['Жасанды интеллект дегеніміз не?',['Компьютердің ақылды тапсырмаларды орындау технологиясы','Тек ойын түрі','Компьютер бөлшегі'],0],['Python не үшін қолданылады?',['Тек сурет салу','Бағдарламалау және деректерді талдау','Тек мәтін теру'],1],['Ақпаратты тексеру не үшін қажет?',['Қате мәліметтің алдын алу үшін','Уақыт өткізу үшін','Қажет емес'],0]];
+document.getElementById('quizbox').innerHTML=qs.map((q,i)=>`<div class="card"><b>${i+1}. ${q[0]}</b>${q[1].map((a,j)=>`<label class="answer"><input style="width:auto;margin-right:8px" type="radio" name="q${i}" value="${j}">${a}</label>`).join('')}</div>`).join('');
+function checkQuiz(){let n=0;qs.forEach((q,i)=>{let v=document.querySelector(`input[name=q${i}]:checked`);if(v&&Number(v.value)===q[2])n++});document.getElementById('score').innerHTML=`<span class="${n===3?'good':'bad'}">Нәтиже: ${n} / ${qs.length}</span>`}
+renderTasks();
+</script></body></html>
